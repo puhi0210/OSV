@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from OSV_lib import displayImage, loadImage
 
 if __name__ == "__main__":
-    image = loadImage("C:/Projects/OSV/LabVaje/Vaja2/valley-1024x683-08bit.raw",
+    image = loadImage("/home/miha/Projects/OSV/LabVaje/Vaja2/valley-1024x683-08bit.raw",
                       (1024, 683), np.uint8)
     displayImage(image, "originalna slika")
 
