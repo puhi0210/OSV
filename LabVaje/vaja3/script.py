@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os,sys
-parent_dir = "/home/miha/Projects/OSV"#os.getcwd()
+parent_dir = os.getcwd()
 sys.path.append(parent_dir)
 
 from LabVaje.OSV_lib import loadImage, displayImage, computeHistogram, displayHistogram
