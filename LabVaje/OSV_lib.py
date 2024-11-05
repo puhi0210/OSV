@@ -29,6 +29,7 @@ def displayImage(iImage, iTitle = ''):
                vmin=0,
                vmax=255,
                aspect='equal')
+    plt.show()
     return fig  # Vrne figuro
 
 
@@ -37,4 +38,77 @@ def saveImage (iImage, iPath, iType):
     oImage = open(iPath, 'wb')  # Odpri datoteko za pisanje v binarnem načinu ('wb' - write binary)
     # Pretvori numpy array v niz bajtov z določenim podatkovnim tipom in fortranovskim redom ('F') in ga zapiši v datoteko
     oImage.write(iImage.astype(iType).tobytes(order = 'F'))
-    oImage.close()
+    oImage.close()  # Zapri datoteko
+
+
+# Funkcija za izračun histograma, normaliziranega histograma in kumulativne porazdelitve verjetnosti sivinskih vrednosti slike
+def computeHistogram(iImage):
+    nBits = int(np.log2(iImage.max()))+1    # Izračunamo število bitov potrebnih za reprezentacijo nivojev sivin
+    oLevels = np.arange(0, 2 ** nBits, 1)   # Ustvarimo vektor nivojev sivin
+    iImage = iImage.astype(np.uint8)    # Pretvorimo sliko v 8-bitni format
+    oHist = np.zeros(len(oLevels))      # Inicializiramo histogram z ničlami
+
+    # Izračunamo histogram
+    for y in range(iImage.shape[0]):
+        for x in range(iImage.shape[1]):
+            oHist[iImage[y,x]] = oHist[iImage[y,x]] + 1
+
+    oProb = oHist / iImage.size # Izračunamo normaliziran histogram
+    oCDF = np.zeros_like(oHist) # Inicializiramo kumulativno porazdelitev z ničlami
+
+    # Izračunamo kumulativno porazdelitev
+    for i in range(len(oProb)):
+        oCDF[i] = oProb[:i+1].sum()
+
+    return oHist, oProb, oCDF, oLevels  # Vrne histogram, normaliziran histogram, kumulativno porazdelitev in nivoje sivin
+
+
+# Funkcija za prikaz histograma
+def displayHistogram(iHist, iLevels, iTitle):
+    plt.figure()    # Ustvarimo novo figuro  
+    plt.title(iTitle)   # Nastavimo naslov histograma
+    # Prikaz histograma s podanimi nivoji in vrednostmi
+    plt.bar(iLevels, iHist, width=1, edgecolor="darkred", color="red")
+    plt.xlim((iLevels.min(), iLevels.max()))    # Nastavimo meje x-osi
+    plt.ylim((0, 1.05 * iHist.max()))   # Nastavimo meje y-osi
+    plt.show()
+
+
+# Funkcija za za določanje slike z izravnanim histogramom
+def equalizeHistogram(iImage):
+    _, _, CDF, _ = computeHistogram(iImage) # Izračunamo kumulativno porazdelitev
+    nBits = int(np.log2(iImage.max()))+1    # Izračunamo število bitov potrebnih za reprezentacijo nivojev sivin
+    max_intensity = 2 ** nBits + 1  # Določimo maksimalno intenziteto
+    oImage = np.zeros_like(iImage)  # Inicializiramo izhodno sliko
+
+    # Izračunamo novo intenziteto za vsako slikovno točko
+    for y in range(iImage.shape[0]):
+        for x in range(iImage.shape[1]):
+            old_intensity = iImage[y,x]
+            new_intensity = np.floor(CDF[old_intensity] * max_intensity)
+            oImage[y,x] = new_intensity
+
+    return oImage
+
+
+# Funkcija za izračun entropije slike
+def computeEntropy(iImage):
+    _, imgProb, _, _ = computeHistogram(iImage) # Izračunamo verjetnostno porazdelitev
+    oEntropy = 0
+
+    # Izračunamo entropijo slike
+    for i in range(len(imgProb)):
+        if imgProb[i] != 0:
+            oEntropy += imgProb[i]* np.log2(imgProb[i]) *(-1)
+
+    return oEntropy # Vrne izračunano entropijo
+
+
+# Funkcija za dodajanje Gaussovega šuma sliki
+def addNoise(iImage, iStd): # iStd - standardna diviacija
+    oNoise = np.random.randn(iImage.shape[0],iImage.shape[1])* iStd + iStd # Ustvarimo Gaussov šum
+    oImage = iImage + (oNoise - iStd)   # Dodamo šum originalni sliki
+    oImage = np.clip(oImage, 0, 255)    # Poskrbi, da vrednosti ostanejo v intervalih 0-255 
+
+    return oImage, oNoise   # Vrne sliko z dodanim šumom in matriko šuma
+

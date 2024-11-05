@@ -1,7 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
+import os,sys
+parent_dir = os.getcwd()
+sys.path.append(parent_dir)
 
-from OSV_lib import displayImage, loadImage
+from LabVaje.OSV_lib import displayImage, loadImage
 
 if __name__ == "__main__":
     image = loadImage("/home/miha/Projects/OSV/LabVaje/Vaja2/valley-1024x683-08bit.raw",
@@ -42,11 +46,11 @@ def displayHistogram(iHist, iLevels, iTitle):
 
 
     
-if __name__ == "__main__":
-    hist, prob, CDF, levels = computeHistogram(image)
-    displayHistogram(hist, levels, "histogram")    
-    displayHistogram(prob, levels, "normaliziran histogram")
-    displayHistogram(CDF, levels, "CDF histogram")
+# if __name__ == "__main__":
+#     hist, prob, CDF, levels = computeHistogram(image)
+#     displayHistogram(hist, levels, "histogram")    
+#     displayHistogram(prob, levels, "normaliziran histogram")
+#     displayHistogram(CDF, levels, "CDF histogram")
 
 
 
@@ -67,10 +71,47 @@ def equalizeHistogram(iImage):
 
     return oImage
 
+# if __name__ == "__main__":
+#     image_equalized = equalizeHistogram(image)
+#     displayImage(image_equalized, "slika z izravnanim histogramom")
+#     hist, prob, CDF, levels = computeHistogram(image_equalized)
+#     displayHistogram(hist, levels, "histogram")    
+#     displayHistogram(prob, levels, "normaliziran histogram")
+#     displayHistogram(CDF, levels, "CDF histogram")
+
+
+def computeEntropy(iImage):
+    _, imgProb, _, _ = computeHistogram(iImage)
+
+    oEntropy = 0
+
+    for i in range(len(imgProb)):
+        if imgProb[i] != 0:
+            oEntropy += imgProb[i]* np.log2(imgProb[i]) *(-1)
+
+    return oEntropy
+
+
 if __name__ == "__main__":
-    image_equalized = equalizeHistogram(image)
-    displayImage(image_equalized, "slika z izravnanim histogramom")
-    hist, prob, CDF, levels = computeHistogram(image_equalized)
-    displayHistogram(hist, levels, "histogram")    
-    displayHistogram(prob, levels, "normaliziran histogram")
-    displayHistogram(CDF, levels, "CDF histogram")
+    print('Entrophy of an image is ', computeEntropy(image))
+
+
+
+def addNoise(iImage, iStd):
+    oNoise = np.random.randn(iImage.shape[0],iImage.shape[1])* iStd + iStd 
+    
+
+    oImage = iImage + (oNoise - iStd)
+    
+    # Poskrbi, da vrednosti ostanejo v intervalih 0-255 
+    oImage = np.clip(oImage, 0, 255)
+
+    return oImage, oNoise
+
+if __name__ == "__main__":
+    std = [2, 5, 10, 25]
+    for i in range(len(std)):
+        noisyImage, noise = addNoise(image,std[i])
+        displayImage(noisyImage, ("Slika z dodanim šumom(standardni odklon je  "+str(std[i])+")"))
+        displayImage(noise, ("Slika Šuma (standardni odklon je "+str(std[i])+")"))
+        
