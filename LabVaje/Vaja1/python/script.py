@@ -4,12 +4,12 @@ import numpy as np
 if __name__ == '__main__':
 
     # Naloga 1
-    im = plt.imread('C:/Projects/OSV/LabVaje/Vaja1/data/lena-color.png')
+    im = plt.imread('/home/miha/Projects/OSV/LabVaje/Vaja1/data/lena-color.png')
 
     plt.figure()
     plt.imshow(im)
     #plt.show()
-    plt.imsave('C:/Projects/OSV/LabVaje/Vaja1/data/lena-color_new.jpg', im)
+    plt.imsave('/home/miha/Projects/OSV/LabVaje/Vaja1/data/lena-color_new.jpg', im)
 
 # Naloga 2
 def loadImage(iPath, iSize, iType):
@@ -35,7 +35,15 @@ def displayImage(iImage, iTitle = ''):
                aspect='equal')
     return fig
 
+
+def saveImage (iImage, iPath, iType):
+    oImage = open(iPath, 'wb')
+    oImage.write(iImage.astype(iType).tobytes(order = 'F'))
+    oImage.close()
+
+
 if __name__ == '__main__':
-    image_2_gray = loadImage('C:/Projects/OSV/LabVaje/Vaja1/data/lena-gray-410x512-08bit.raw', (410,512), np.uint8)
+    image_2_gray = loadImage('/home/miha/Projects/OSV/LabVaje/Vaja1/data/lena-gray-410x512-08bit.raw', (410,512), np.uint8)
     displayImage(image_2_gray, 'Lena')
     plt.show()
+    saveImage(image_2_gray, '/home/miha/Projects/OSV/LabVaje/Vaja1/data/lena-gray-410x512-08bit-NEW.raw', np.uint8)

@@ -32,3 +32,9 @@ def displayImage(iImage, iTitle = ''):
     return fig  # Vrne figuro
 
 
+# Funkcija za shranjevanje slike v RAW formatu
+def saveImage (iImage, iPath, iType):
+    oImage = open(iPath, 'wb')  # Odpri datoteko za pisanje v binarnem načinu ('wb' - write binary)
+    # Pretvori numpy array v niz bajtov z določenim podatkovnim tipom in fortranovskim redom ('F') in ga zapiši v datoteko
+    oImage.write(iImage.astype(iType).tobytes(order = 'F'))
+    oImage.close()
