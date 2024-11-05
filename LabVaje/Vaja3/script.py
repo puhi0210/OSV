@@ -9,7 +9,7 @@ from LabVaje.OSV_lib import loadImage, displayImage, computeHistogram, displayHi
 if __name__ == "__main__":
     print(parent_dir)
     # plt.show() to display image when run from terminal
-    I =loadImage("LabVaje/vaja3/data/pumpkin-200x152-08bit.raw", (200, 152), np.uint8)
+    I =loadImage("/home/miha/Projects/OSV/LabVaje/Vaja3/data/pumpkin-200x152-08bit.raw", (200, 152), np.uint8)
     displayImage(I, "Originalna slika")
     plt.show()
 
