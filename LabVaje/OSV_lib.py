@@ -20,15 +20,36 @@ def loadImage(iPath, iSize, iType):
 
 
 # Funkcija za prikaz slike
-def displayImage(iImage, iTitle = ''):
+def displayImage(iImage, iTitle = '', iGridX = None, iGridY = None):
     fig = plt.figure()  # Ustvarimo figuro za prikaz slike
     plt.title(iTitle)   # Ustvarimo figuro za prikaz slike
+
+    if iGridX is not None and iGridY is not None:
+        stepX = iGridX[1] - iGridX[0]
+        stepY = iGridY[1] - iGridY[0]
+
+        extent = (
+            iGridX[0] - 0.5 * stepX,
+            iGridX[-1] + 0.5 * stepX,
+            iGridY[-1] + 0.5 * stepY,
+            iGridY[0] - 0.5 * stepY
+        )
+    else:
+        extent = (
+            0 - 0.5, 
+            iImage.shape[1] - 0.5,
+            iImage.shape[0] - 0.5,
+            0 - 0.5,
+        )
+
     # Prikaz slike s sivinsko barvno karto in določenimi mejnimi vrednostmi
     plt.imshow(iImage, 
                cmap='gray',
                vmin=0,
                vmax=255,
-               aspect='equal')
+               aspect='equal',
+               extent=extent,
+               )
     plt.show()
     return fig  # Vrne figuro
 
@@ -112,3 +133,48 @@ def addNoise(iImage, iStd): # iStd - standardna diviacija
 
     return oImage, oNoise   # Vrne sliko z dodanim šumom in matriko šuma
 
+
+
+
+
+
+# VAJA 4
+
+
+def getPlanerCrossSection(iImage, iDim, iNormVec, iLoc):
+    Y,X,Z = iImage.shape
+    dx, dy, dz = iDim
+
+    if iNormVec == [1,0,0]:
+        oCS = iImage[:, iLoc, :].T
+        oH = np.arange(Y) * dy
+        oV = np.arange(Z) * dz
+    elif iNormVec == [0,1,0]:
+        oCS = iImage[iLoc, :, :].T
+        oH = np.arange(X) * dx
+        oV = np.arange(Z) * dz
+    elif iNormVec == [0,0,1]:
+        oCS = iImage[:, :, iLoc]
+        oH = np.arange(X) * dx
+        oV = np.arange(Y) * dy
+
+    return np.array(oCS), oH, oV
+
+def getPlanarProjection(iImage, iDim, iNormVec, iFunc):
+    Y, X, Z = iImage.shape
+    dx, dy, dz = iDim
+
+    if iNormVec == [1,0,0]:
+        oP = iFunc(iImage, axis = 1).T
+        oH = np.arange(Y) * dy
+        oV = np.arange(Z) * dz
+    elif iNormVec == [0,1,0]:
+        oP = iFunc(iImage, axis = 0).T
+        oH = np.arange(X) * dx
+        oV = np.arange(Z) * dz
+    elif iNormVec == [0,0,1]:
+        oP = iFunc(iImage, axis = 2)
+        oH = np.arange(X) * dx
+        oV = np.arange(Y) * dy
+
+    return oP, oH, oV
