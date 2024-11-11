@@ -46,11 +46,11 @@ def displayHistogram(iHist, iLevels, iTitle):
 
 
     
-# if __name__ == "__main__":
-#     hist, prob, CDF, levels = computeHistogram(image)
-#     displayHistogram(hist, levels, "histogram")    
-#     displayHistogram(prob, levels, "normaliziran histogram")
-#     displayHistogram(CDF, levels, "CDF histogram")
+if __name__ == "__main__":
+    hist, prob, CDF, levels = computeHistogram(image)
+    displayHistogram(hist, levels, "histogram")    
+    displayHistogram(prob, levels, "normaliziran histogram")
+    displayHistogram(CDF, levels, "CDF histogram")
 
 
 
@@ -71,13 +71,13 @@ def equalizeHistogram(iImage):
 
     return oImage
 
-# if __name__ == "__main__":
-#     image_equalized = equalizeHistogram(image)
-#     displayImage(image_equalized, "slika z izravnanim histogramom")
-#     hist, prob, CDF, levels = computeHistogram(image_equalized)
-#     displayHistogram(hist, levels, "histogram")    
-#     displayHistogram(prob, levels, "normaliziran histogram")
-#     displayHistogram(CDF, levels, "CDF histogram")
+if __name__ == "__main__" :
+    image_equalized = equalizeHistogram(image)
+    displayImage(image_equalized, "slika z izravnanim histogramom")
+    hist, prob, CDF, levels = computeHistogram(image_equalized)
+    displayHistogram(hist, levels, "histogram")    
+    displayHistogram(prob, levels, "normaliziran histogram")
+    displayHistogram(CDF, levels, "CDF histogram")
 
 
 def computeEntropy(iImage):
