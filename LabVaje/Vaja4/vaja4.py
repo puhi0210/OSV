@@ -28,25 +28,35 @@ if __name__=="__main__":
     print(I.shape)
     displayImage(I[:, 250, :], "Prerez")
 
-    xc = 290
+    xc = 256
     sagCS, sagH, sagV = getPlanerCrossSection(I, pxDim, [1,0,0], xc)
     displayImage(sagCS, "Sagital crossection", sagH, sagV)
 
-    xc = 30
+    xc = 35
     sagCS, sagH, sagV = getPlanerCrossSection(I, pxDim, [0,1,0], xc)
-    displayImage(sagCS, "Sagital crossection", sagH, sagV)
+    displayImage(sagCS, "Coronal crossection", sagH, sagV)
 
-    xc = 500
+    xc = 467
     sagCS, sagH, sagV = getPlanerCrossSection(I, pxDim, [0,0,1], xc)
-    displayImage(sagCS, "Sagital crossection", sagH, sagV)
+    displayImage(sagCS, "Axial crossection", sagH, sagV)
 
 
     func = np.max
     [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [1,0,0], func)
-    displayImage(sagP, "Sagital projection", sagH, sagV)
+    displayImage(sagP, "Sagital projection (Function = MAX)", sagH, sagV)
 
     [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [0,1,0], func)
-    displayImage(sagP, "Sagital projection", sagH, sagV)
+    displayImage(sagP, "Coronal projection (Function = MAX)", sagH, sagV)
 
     [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [0,0,1], func)
-    displayImage(sagP, "Sagital projection", sagH, sagV)
+    displayImage(sagP, "Axial projection (Function = MAX)", sagH, sagV)
+
+    func = np.average
+    [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [1,0,0], func)
+    displayImage(sagP, "Sagital projection (Function = Average)", sagH, sagV)
+
+    [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [0,1,0], func)
+    displayImage(sagP, "Coronal projection (Function = Average)", sagH, sagV)
+
+    [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [0,0,1], func)
+    displayImage(sagP, "Axial projection (Function = Average)", sagH, sagV)

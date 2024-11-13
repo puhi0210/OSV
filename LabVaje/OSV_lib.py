@@ -178,3 +178,5 @@ def getPlanarProjection(iImage, iDim, iNormVec, iFunc):
         oV = np.arange(Y) * dy
 
     return oP, oH, oV
+
+
