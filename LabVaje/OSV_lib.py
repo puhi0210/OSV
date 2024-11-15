@@ -180,3 +180,41 @@ def getPlanarProjection(iImage, iDim, iNormVec, iFunc):
     return oP, oH, oV
 
 
+# VAJA 5
+
+def scaleImage(iImage, iA, iB):
+    oImage = np.array(iImage, dtype=float)
+    oImage = iImage * iA + iB
+    return oImage
+
+
+def windowImage(iImage , iC , iW):
+    oImage = np.array(iImage, dtype=float)
+    oImage = (255/iW) * (iImage -(iC -(iW/2)))
+
+    oImage[iImage < iC - iW/2] = 0
+    oImage[iImage > iC + iW/2] = 255
+
+    return oImage
+
+
+def sectionalScaleImage(iImage, iS, oS):
+    oImage = np.array(iImage, dtype=float)
+    
+    for i in range(len(iS)-1):
+        sL = iS[i]
+        sH = iS[i+1]
+
+        idx = np.logical_and(iImage >= sL, iImage <= sH)
+        
+        # Scale factor
+        k = (oS[i+1] - oS[i]) / (sH-sL)
+
+        oImage[idx] = k * (iImage[idx]-sL) + oS[i]
+
+    return oImage
+
+def gammaImage(iImage, iG):
+    oImage = np.array(iImage, dtype=float)
+    oImage = 255**(1-iG) * (iImage ** iG)
+    return oImage
