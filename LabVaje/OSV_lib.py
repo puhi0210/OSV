@@ -218,3 +218,112 @@ def gammaImage(iImage, iG):
     oImage = np.array(iImage, dtype=float)
     oImage = 255**(1-iG) * (iImage ** iG)
     return oImage
+
+
+# VAJA 6
+
+def getRadialValues(iXY, iCP):
+    K = iCP.shape[0]
+
+    # instanciranje izhodnih radialnih uteži
+    oValue = np.zeros(K)
+
+    x_i, y_i = iXY
+    for k in range(K):
+        x_k, y_k = iCP[k]
+
+        # razdalja vhodne tocke do k-te kontrolne točke
+        r = np.sqrt((x_i - x_k) ** 2 + (y_i -y_k) ** 2)
+
+        # apliciranje radialne funkcije na r
+        if r > 0:
+            oValue[k] = -(r**2) * np.log(r)
+
+    return oValue
+
+def getParametrs(iType, scale = None, trans = None, rot = None, shear = None, orig_pts = None, mapped_pts = None):
+    # default values
+    oP = {}
+
+    if iType == "affine":
+        if scale is None:
+            scale = [1,1]
+        if trans is None:
+            trans = [0,0]
+        if rot is None:
+            rot = 0
+        if shear is None:
+            shear = [0,0]
+
+        Tk = np.array([
+            [scale[0],0,0],
+            [0,scale[1],0],
+            [0,0,1]
+        ])
+
+        Tt = np.array([
+            [1,0,trans[0]],
+            [0,1,trans[1]],
+            [0,0,1]
+        ])
+
+        phi = rot*np.pi / 180
+
+        Tf = np.array([
+            [np.cos(phi),-np.sin(phi),0],
+            [np.sin(phi),np.cos(phi),0],
+            [0,0,1]
+        ])
+
+        Tg = np.array([
+            [1,shear[0],0],
+            [shear[1],1,0],
+            [0,0,1]
+        ])        
+
+        oP = Tg @ Tf @ Tt @ Tk
+
+    elif iType == "radial":
+        assert orig_pts is not None, "Manjkajo orig_pts"
+        assert mapped_pts is not None, "Manjkajo mapped_pts"
+
+        K = orig_pts.shape[0]
+
+        UU = np.zeros((K,K), dtype=float)
+
+        for i in range(K):
+            UU[i,:] = getRadialValues(orig_pts[i,:], orig_pts)
+
+        oP["alphas"] = np.linalg.solve(UU, mapped_pts[:,0])
+        oP["betas"] = np.linalg.solve(UU, mapped_pts[:,1])
+        oP["pts"] = orig_pts
+        
+    return oP
+
+
+def transformImage(iType, iImage, iDim, iP, iBgr=0, iInterp=0):
+    Y, X = iImage.shape
+    dx, dy = iDim
+
+    oImage = np.ones((Y,X))*iBgr
+
+    for y in range(Y):
+        for x in range(X):
+            x_hat, y_hat = x*dx, y*dy
+            
+            if iType == "affine":
+                x_hat, y_hat, _ = iP @ np.array([x_hat,y_hat,1])
+
+            if iType == "radial":
+                U = getRadialValues([x_hat,y_hat], iP["pts"])
+                x_hat,y_hat = np.array([U @ iP["alphas"], U @ iP["betas"]])            
+
+            x_hat, y_hat = x_hat/dx, y_hat/dy
+
+            if iInterp == 0:
+                x_hat, y_hat = round(x_hat), round(y_hat)
+                if 0 <= x_hat < X and 0 <= y_hat < Y:
+                    oImage[y, x] = iImage[y_hat,x_hat]    
+    return oImage
+
+
