@@ -327,3 +327,57 @@ def transformImage(iType, iImage, iDim, iP, iBgr=0, iInterp=0):
     return oImage
 
 
+# VAJA 7
+
+def spatialFiltering(iType, iImage, iFilter, iStatFunc=None, iMorphOp=None):
+    N,M = iFilter.shape
+    m = int((M-1)/2)
+    n = int((N-1)/2)
+    
+    iImage = changeSpatialDomain("enlarge", iImage, m, n)
+
+    Y,X = iImage.shape
+    oImage = np.zeros((Y,X), dtype=float)
+
+    for y in range(n, Y-n):
+        for x in range(m,X-m):
+            patch = iImage[y-n:y+n+1, x-m:x+m+1]
+            
+            if iType == "kernel":
+                oImage[y,x] = (patch * iFilter).sum()
+            elif iType == "statistical":
+                oImage[y,x] = iStatFunc(patch)                 
+            elif iType == "morphological":
+                R = patch[iFilter!=0]
+                if iMorphOp == "erosion":
+                    oImage[y,x]=R.min()
+                elif iMorphOp == "dialation":
+                    oImage[y,x]=R.max()
+                else:
+                    print("\nError: Incorrect iMorphOp!\n")
+                    return 0                                 
+            else:
+                print("\nError: Incorrect iType!\n")
+                return 0        
+
+    oImage = changeSpatialDomain("reduce", oImage, m, n)
+    return oImage
+
+
+def changeSpatialDomain(iType, iImage, iX, iY, iMode=None, iBgr=0):
+    Y,X = iImage.shape
+
+    if iType == "enlarge":
+        if iMode is None:
+            oImage = np.zeros((Y+2*iY, X+2*iX))
+            oImage[iY:Y+iY, iX:X+iX] = iImage
+
+    elif iType == "reduce":
+        if iMode is None:
+            oImage = iImage[iY:Y-iY, iX:X-iX]
+
+    else:
+        print("\nError: Incorrect iType!\n")
+        return 0        
+    
+    return oImage
