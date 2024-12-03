@@ -51,6 +51,10 @@ if __name__=="__main__":
     [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [0,0,1], func)
     displayImage(sagP, "Axial projection (Function = MAX)", sagH, sagV)
 
+    [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [3.83, 9.24, 0], func)
+    displayImage(sagP, "Rotated projection (Function = MAX)", sagH, sagV)
+
+
     func = np.average
     [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [1,0,0], func)
     displayImage(sagP, "Sagital projection (Function = Average)", sagH, sagV)
@@ -60,3 +64,7 @@ if __name__=="__main__":
 
     [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [0,0,1], func)
     displayImage(sagP, "Axial projection (Function = Average)", sagH, sagV)
+
+    [sagP, sagH, sagV] = getPlanarProjection(I, pxDim, [3.83, 9.24, 0], func)
+    displayImage(sagP, "Rotated projection (Function = Average)", sagH, sagV)
+

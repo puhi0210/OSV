@@ -5,7 +5,7 @@ import os,sys
 parent_dir = os.getcwd()
 sys.path.append(parent_dir)
 
-from LabVaje.OSV_lib import loadImage, displayImage, scaleImage, windowImage, sectionalScaleImage, gammaImage
+from LabVaje.OSV_lib import loadImage, displayImage, scaleImage, windowImage, sectionalScaleImage, gammaImage, thresholdImage
 
 if __name__ == "__main__":
     I =loadImage("LabVaje/Vaja5/data/image-512x512-16bit.raw", [512,512], np.int16)
@@ -28,3 +28,24 @@ if __name__ == "__main__":
     gImage = gammaImage(wImage, 5)
     displayImage(gImage, "Gamma preslikana slika")
     print (f"Gamma image:\tmin = {gImage.min()}, max = {gImage.max()}")
+
+    # GRADIVO
+    # Naloga 2
+    tImage = thresholdImage(wImage, 127)
+    displayImage(tImage, "Slika po upragovanju")
+    print (f"Gamma image:\tmin = {tImage.min()}, max = {tImage.max()}")
+
+    # Naloga 3
+    t_values = np.arange(wImage.min(), wImage.max() + 1, 1)
+    sg_values = []
+
+    for t in t_values:
+        tImage = thresholdImage(wImage, t)
+        sg_values.append(np.sum(tImage == 0))
+
+    plt.plot(t_values, sg_values)
+    plt.xlabel('Pragovna vrednost (t)')
+    plt.ylabel('Število slikovnih elementov s sivinsko vrednostjo 0')
+    plt.title('Pragovna funkcija')
+    plt.grid(True)
+    plt.show()

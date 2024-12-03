@@ -28,5 +28,7 @@ if __name__ == "__main__":
     uv = np.array([[0,0],[511,0],[0,511],[255,255]])
     P = getParametrs("radial", orig_pts=xy, mapped_pts=uv)
     print(P)
-    rImage = transformImage("radial", I, pxDim, P, iBgr=brg)
+    rImage = transformImage("radial", I, pxDim, P, iBgr=brg, iInterp=0)
+    displayImage(rImage, "Radialna preslikava", gX,gY)
+    rImage = transformImage("radial", I, pxDim, P, iBgr=brg, iInterp=1)
     displayImage(rImage, "Radialna preslikava", gX,gY)
