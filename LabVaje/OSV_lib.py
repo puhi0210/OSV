@@ -553,3 +553,7 @@ def changeSpatialDomain(iType, iImage, iX, iY, iMode=None, iBgr=0):
 #         for j in range(iM):
             
 #     return oFilter
+
+
+# VAJA 8
+
