@@ -51,7 +51,7 @@ def displayImage(iImage, iTitle = '', iGridX = None, iGridY = None):
                aspect='equal',
                extent=extent,
                )
-    plt.show()
+    #plt.show()
     return fig  # Vrne figuro
 
 
